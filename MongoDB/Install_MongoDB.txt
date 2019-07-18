@@ -1,0 +1,27 @@
+Installation MongoDB sous windows:
+
+1- Télécharger la version de MongoDB pour windows à http://www.mongodb.org/downloads 
+
+2- Installer dans un répertoire à la racine de votre disque C:\ , utiliser un nom sans espaces comme c:\mongoDB
+
+3- Dans ce répertoire, créez un dossier nommé config , dans ce dossier un fichier mongodb.conf et insérez-y les lignes suivantes:
+	logpath=c:\mongodb\logs
+	dbpath=c:\mongoDB\data\db
+	Port  = 27017
+
+/******************Ouveture de l'invite de commande******************/
+
+4- Création d'un répertoire pour les bases de données avec la commande 
+	md c:\mongoDB\data\db
+
+5- Création d'un répertoire pour les logs               md c:\mongo\data\logs
+
+6- Pour confirmer que votre installation a bien fonctionné, exécutez la commande    c:\mongoDB\bin\ mongod.exe  --config c:\mongodb\config\mongodb.conf –install
+
+7- Demarrer le service avec la commande 
+	net start Mongodb
+
+8- Connecter vous à votre instance MongoDB avec c:\mongoDB\bin\mongo
+
+//Pour vous connecter à la database de mongo, ouvrez une nouvelle invite de commande et entrez
+	mongo --port 27017.

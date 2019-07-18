@@ -1,0 +1,117 @@
+MongoDB - Java
+/******************Etape 1 ******************/
+
+1- Création de l'application Java
+	Pour utiliser MongoDB avec Java, il faut télécharger la librairie (Driver) http://mongodb.github.io/mongo-java-driver/?jmp=docs
+
+2- Création  de la connexion à MongoDb
+	Mongo  mongo  = new  Mongo("localhost",27017);
+
+MongoClient  mongoClient  = new  MongoClient ("localhost“, 27017);
+Mongo est utilisé pour les anciènne version de mongo
+MongoClient est utilisé depuis les version 2.10.0
+
+3- Sélection de  la Base de Données
+	DB  db  = mongoClient.getDB(“nomBD");
+
+4- Step 4 : Création d'une collection
+	DBCollection  UserCollection  =  db.getCollectionmongo(“nomCollection");
+
+5- Création d'un document
+	BasicDbObject  doc = new BasicDbObject();
+
+5.1- Ajout des données au documents en respectant la notion de clé/valeur
+	doc.append("_id",1);
+	doc.append("nom","Sandra");
+	doc.append("prenom", txt.getText());
+	doc.append("time", System.currentTimeMillis());
+
+5.2- Insertion du document dans la collection
+		UserCollection.insert(doc);
+
+6- CREATE
+
+	BasicDbObject  doc = new BasicDbObject();
+	doc.append("_id",1);
+	doc.append("nom","Sandra");
+	doc.append("prenom", txt.getText());
+	doc.append("avoir",
+		new BasicDBObject("rue": "65, rue de Paris ")
+		.append("codePostal" :"75012")
+		.append("ville":  "Paris")
+		);
+
+7- CREATE ArrayList
+	ArrayList<BasicDBObject> liste = new ArrayListe()
+	liste.add(new BasicDBObject("rue": "65, rue de 		Paris ").append("codePostal" :"75012")
+		.append("ville":  "Paris")
+		)
+	BasicDbObject  doc = new BasicDbObject();
+	doc.append("_id",1);
+	doc.append("nom","francis");
+	doc.append("prenom", txt.getText());
+	doc.append("avoir",  liste	);
+
+8- DELETE
+
+	BasicDbObject  doc = new BasicDbObject();
+	doc.append("_id",1);
+
+	 UserCollection.remove(doc);
+9- UPDATE
+
+	BasicDbObject  docNew= new BasicDbObject();
+	 BasicDbObject  docOld = new BasicDbObject();
+	 docOdl.append("_id",1);
+	docNew.append("_id",1);
+	docNew.append("nom","francis");
+	docNew.append("prenom", txt.getText());
+
+	 UserCollection.update(docOld,docNew);
+
+10- GET ONE
+   .Cursor est un object permettant de parcourir les documents d'une collection.
+   .Il permet une itération automatique sur les résultats de la requête
+   .hashNext() : renvoie true s'il y a des documents dans le curseur
+   .next() :  Renvoie le document suivant
+
+	 DBCursor cursor  = UserCollection.find();
+		while(cursor.hashNext()){
+			DBObject obj = cursor.next();
+		…	}
+
+10.1- cursor 
+Cursor est un object permettant de parcourir les documents d'une collection.
+Il permet une itération automatique sur les résultats de la requête
+hashNext() : renvoie true s'il y a des documents dans le curseur
+next() :  Renvoie le document suivant
+
+	 DBCursor cursor  = UserCollection.find();
+		while(cursor.hashNext()){
+			DBObject obj = cursor.next();
+		…	}
+
+10.2- find, recherche d'un document par son id avec une collection de sous documents
+ BasicDbObject  doc= new BasicDbObject();
+ doc .append("_id",2);
+	 DBCursor cursor  = UserCollection.find(doc);
+		while(cursor.hashNext()){
+			DBObject obj = cursor.next();
+		obj.get("nom");   
+
+ BasicDBList   liste = (BasicDBList)obj.get("avoir")
+
+10.3- Exemple Parcour de l'object BasicList
+
+ BasicDBList   liste = (BasicDBList)obj.get("avoir")
+		
+	for(int i=0; i < liste.size();i++){
+	BasicDBObject unAdresse = (BasicDBObject)liste.get(i);	
+			 unAdresse.get("rue");
+			unAdresse .get("codePostal");
+			 unAdresse.get("ville");
+		}
+}
+
+
+

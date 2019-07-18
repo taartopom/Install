@@ -1,0 +1,181 @@
+MongoDB – Commande
+
+/******************Ouveture de l'invite de commande******************/
+
+1- Connection au serveur mongod
+   .la commande mongo permet de se connecter à un serveur local (localhost) et sur le port par défaut 27017.
+   .Pour se connecter à un serveur distant et/ ou un port différent on ajoutera les paramètres --port et --host à la suite de la commansde mongo
+   .mongo --port 9087 --host myhost.local
+
+2- Choisir une base de donnée
+   .db  : Pour connaitre la DB courante
+   .Show dbs : Pour connaitre les différentes DB existantes ( gérées par le serveur mongod sur lequel on est connecté )
+   .use nomBD :  créer la DB si elle n'existe pas et se connecte à elle	ou se connecte à la DB si elle existe
+
+3- Supprimer une base de données
+   .use db_name ;
+   .db.dropDatabase();
+
+4- Afficher tous les objet de la base de données
+   .db.nomDB.find()  : Pour afficher le contenu d'une collection
+
+5-La console exécute les commandes JS
+   .Print("Hello word");
+   .On peut faire des calculs : 5+5 dans la console 
+   .On également sauvegarder des commande dans des variable	
+Exemple : 
+t = db.Cinema;
+t.find();
+
+/******************Importer/ exporter les données******************/
+
+1- La commande mongoimport  permet d’importer les données
+   .La commande mongoimport se trouve dans le sous répertoire bin du repertoire mongoDB
+   .Option - -db permet de préciser la base de données
+   .--collection nom_collection la collection dans la quelle on souhaite importer les données
+   .Chemin du fichier contenant les données. Exemple avec l'extension .json
+Exemple:
+mongoDB\bin\ mongoimport --db new_york   -- collection restaurants d:\Resto\restaurants.json
+
+2- La commande mongoexport  permet d’exporter les données d’une base
+   .La commande mongoexport se trouve dans le sous répertoire bin du repertoire mongoDB
+   .Option - -db permet de préciser la base de données
+   .--collection nom_collection la collection dans la quelle on souhaite importer les données
+   .-- out nomSauvegarde.json
+Exemple:
+mongoDB\bin\ mongoexport -- new_york   -- collection restaurants  restaurants.json
+
+/******************Interrogation des données******************/
+
+1-find() : permet de retourner une liste de documents au sein d'une collection
+
+2- findOne() permet d'afficher un élément de la collection
+   .db.Cinema.findOne();
+
+3- Il suffit ensuite de combiner ces commandes avec des filtres dont la syntaxe est propre à Mongo et utilise la notation JSON , on parle d'un langage de requête à base de motifs {JSON}
+
+4- Collections :  une collection est léquivalent d'une table en relationnnel
+
+5- Création d'une collection : db.createCollection(‘ nomCollection’);
+   .db.createCollection(‘user’);
+   .show  collections pour afficher les collections de la base
+
+6- Filtrer et projecter les données avec un motif JSON
+   .Le point fondamental à retenir pour le langage de MongoDB est le clé/valeur, avec des définitions de motifs en document JSON.  Ainsi ,chaque requête sera un document, avec des clés et des valeurs
+
+7- Lister les collections
+   .show collections ou db.getCollections();
+
+8- Supprimer une collection
+   .db.nomCollection.drop( );
+
+9- Renommer une collection
+   .Db.oldname.renameCollection("newname");
+
+10- Filtrer les données avec un motif JSON  
+   .Le deuxième point est la structure d'un document
+   .Chaque document est traité indépendamment, comme en relationnel, mais les documents contiennent maintenant des imbrications et des listes, ce qui n'est pas habituel
+Exemple:
+db.restaurant.find({"borough": "Brooklyn"})  :   cet exemple récupère tous les restaurants dans le quartier de Brooklyn.
+db.restaurant.find({"borough":"Brooklyn",  "cusine" : "Italian" })   : tous les restaurants dans le quartier de Brooklyn qui font la cuisine italienne
+db.restaurant.find({"borough": "Brooklyn"}).count()  :   cet exemple donne le nombre de restaurants dans le quartier de Brooklyn.
+db.restaurant.find(
+			{"borough": "Brooklyn"	
+		 	 "cuisine" : "Italian",
+			   "address.street" : " 5 Avenue",
+		  	   "name" : /pizza/i	} )  : Cet exemple donne la liste des restaurants italien dans le quartier de Brooklyn dans la 5e avenue dont le nom contient le mot "pizza" . Le i pour rendre la recherche insensible à la case
+
+11- Projection
+   .Et si nous souhaitons ne garder dans le résultat que le nom du restaurant ? C'est ce que l'on appelle une projection.
+   .Un deuxième paramète optionnel de la fonction find permet de choisir les clés à retourner dans le résultat.  Pour cela, il faut mettre la clé, et la valeur "1" pour projecter la valeur ( on reste dans le concept de "clé/valeur").
+Exemple:
+db.restaurant.find({"borough": "Brooklyn"	, "cuisine" : "Italian", "address.street" : " 5 Avenue", "name" : /pizza/i	}, {"name":1} )
+
+   .L'identifiant du document "_id" est automatiquement projecté, si vous souhaitez le faire disparaître, il suffit de rajouter la valeur 0
+Exemple:
+db.restaurant.find({"borough": "Brooklyn"	, "cuisine" : "Italian", "address.street" : " 5 Avenue", "name" : /pizza/i	}, {"name":1 , "_id" : 0 } )
+
+
+/******************Find : Recherche Multiple******************/
+
+1- Or
+   .db.Users.find({$or:[{country: "Belgium"},{firstname : "Alford"}]})     
+Retourne toute les données dont le pays vaut Belgium ou bien ou le prénom vaut Alford
+
+2- And
+   .db.Users.find({$and:[{country: "Belgium"},{birthday: "1990-10-07"}]})     
+Retourne toute les données dont le pays vaut Belgium et  ou la date de naissance vaut "1990-10-07"
+
+3- Not
+db.Users.find({country:{ $ne:"Belgium"} } )     
+Retourne toute les données dont le pays ne vaut pas Belgium
+
+4- like
+   .db.Users.find( { country :   /in/ } )     
+Retourne toute les données dont le pays contient le mot in
+   .db.Users.find ( { country :  { $regex : /^fr/i } } )  
+Retourne toutes les données dont le pays commence par fr   
+   .db.Users.find ( { country :  { $regex : /ce$ /} } )  
+Retourne toutes les données dont le pays se termine par ce
+
+/******************CRUD******************/
+
+1- Commande create() permet de créer une collection
+   .use Client  
+   .db. createCollection(clients)
+
+2-Commande insert()  permet d'ajouter un document ou une liste de document à une collection
+   .db.clients.insert([{ nom:"francis", prenom:"jean"} ,
+				  {nom:"Stephane",prenom:"dupond"}] );
+   .db.clients.find() ;  pour afficher
+   .db.clients.find().pretty() ; pour avoir une structure bien lisible
+   .db.clients.insert(  { nom:"Didier", prenom:"Deschamps" , sexe : "Homme"} );
+   .Le système ajoute un identifiant unique pour chaque document, mais vous pouvez définir vos identifiant
+db.clients.insert(  {"_id":1 , 
+			nom:"Marlaine",
+			prenom:"chanty" , 
+			sexe : "Femme"   });
+
+3- Commande insertOne() :  qui permet également d'insérer un document à une collection
+
+4- Commande insertMany() :  qui permet également d'insérer un document à une collection
+
+5- Commande update() et $set
+   .Permet de faire la mise à jour d'un ou de plusieurs documents
+   .Comme pour le find,  le premier paramètre sert de critère de recherche pour les données à mettre à jour, le second va servir à définir la mise à jour voulue
+Exemple:
+db.clients.update(  {"_id" : 2  } ,
+		{ $set  :  {nom: "Stephy G"}});
+
+6- Commande update()  et $set  sur plusieurs valeurs
+db.clients.update({"_id" : 2},{ $set :{
+			   "nom"  :  " Lady"  ,
+                	   "prenom"  :  " B " ,
+			   "sexe"  :  " Hemme" }});
+
+7- Commande update()  et $unset
+   .Le mot clé $set permet de préciser les champs que nous souhaitons mettre à jour
+   .Le $unset permet de supprimer un champs dans le document
+db.clients.update(  {"_id" : 2  } ,{ $unset  :  {sexe : 1}});
+
+8- Commande update()  et $rename
+   .Le mot clé $rename permet de modifier une clé (champs)
+Exemple:
+db.clients.update(  {"_id" : 2  } ,{ $rename  :  {"prenom"  :  " sexe"}});
+
+9- Commande remove() :  permet de supprimer un document dans une collection
+Exemple:
+db.clients.remove(  {"_id" : 2  } );
+db.clients.remove(  {"nom" : Stephy  } );
+
+10- Commande remove({ }) : supprime tous les  documents d'une une collection
+Exemple
+db.clients.remove(  {  } );
+
+
+
+
+
+
+
+
